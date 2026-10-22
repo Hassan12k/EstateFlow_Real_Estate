@@ -1,4 +1,548 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111827"><meta name="description" content="Premium real estate inventory, quotation and payment management app"><title>Real Estate Management Suite</title><link rel="stylesheet" href="styles.css"></head><body>
-<div id="app"><aside class="sidebar"><div class="brand"></div><nav><button class="nav active" data-view="dashboard">⌂ <span>Dashboard</span></button><button class="nav" data-view="inventory">▦ <span>Inventory</span></button><button class="nav" data-view="calculator">◈ <span>Payment Calculator</span></button><button class="nav" data-view="compare">⇄ <span>Compare Units</span></button><button class="nav" data-view="leads">♙ <span>Leads</span></button><button class="nav" data-view="settings">⚙ <span>Project Settings</span></button><button class="nav" data-view="import">⇧ <span>Excel Import & Sync</span></button></nav><div class="side-note"><span class="dot"></span> Local-first app<small>Your data stays in this browser.</small></div></aside>
-<main class="main"><header class="topbar"><div><button class="mobile-menu" id="mobileMenu">☰</button><div class="eyebrow">REAL ESTATE MANAGEMENT</div><h1 id="pageTitle">Dashboard</h1></div><div class="top-actions"><button class="btn ghost" id="quickQuote">＋ New Quote</button><div class="avatar">H</div></div></header>
-<section id="view-dashboard" class="view active-view"></section><section id="view-inventory" class="view"></section><section id="view-calculator" class="view"></section><section id="view-compare" class="view"></section><section id="view-leads" class="view"></section><section id="view-settings" class="view"></section><section id="view-import" class="view"></section></main></div><div class="modal-backdrop" id="modalBackdrop"><div class="modal" id="modal"></div></div><div id="toast" class="toast"></div><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en" class="dark scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CineSphere VOD - Movie & Series Discovery</title>
+    <meta name="description" content="Advanced Video-on-Demand discovery platform with TMDB integration, 4 media rows, language selector, portable mobile APK drawer, and multi-server failover video modal." />
+    <meta property="og:title" content="CineSphere VOD - Movie & Series Discovery" />
+    <meta property="og:description" content="Advanced Video-on-Demand discovery platform with TMDB integration, 4 media rows, language selector, portable mobile APK drawer, and multi-server failover video modal." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    
+    <!-- Link to Tailwind CSS entry -->
+    <link rel="stylesheet" href="/src/index.css" />
+  </head>
+  <body class="bg-[#07090e] text-slate-100 min-h-screen selection:bg-red-600 selection:text-white font-sans antialiased overflow-x-hidden">
+    
+    <!-- CINEMA LIGHTS DIMMING OVERLAY -->
+    <div id="cinema-lights-overlay" class="fixed inset-0 bg-black/95 z-40 hidden transition-opacity duration-500 pointer-events-none"></div>
+
+    <!-- TOP MOBILE APK PROMO STRIP -->
+    <div id="mobile-apk-strip" class="sm:hidden bg-gradient-to-r from-red-950 via-slate-900 to-red-950 border-b border-red-900/40 px-3 py-1.5 flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2">
+        <span class="flex h-2 w-2 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+        </span>
+        <span class="text-slate-200 font-medium">Faster on Mobile</span>
+        <span class="px-1.5 py-0.2 bg-red-600/30 text-red-300 rounded font-mono text-[10px]">APK v3.4</span>
+      </div>
+      <button id="open-apk-banner-btn" class="text-red-400 font-semibold hover:text-red-300 underline flex items-center gap-1 cursor-pointer">
+        Install App →
+      </button>
+    </div>
+
+    <!-- MAIN NAVBAR -->
+    <header class="sticky top-0 z-30 w-full cinema-glass border-b border-slate-800/80 transition-all duration-300">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3">
+        
+        <!-- Left: Brand Logo & Navigation Links -->
+        <div class="flex items-center gap-6 lg:gap-8 flex-shrink-0">
+          <a href="#" class="flex items-center gap-2.5 group">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-red-600 to-amber-500 flex items-center justify-center shadow-lg shadow-red-600/30 group-hover:scale-105 transition">
+              <svg class="w-5 h-5 text-white fill-current" viewBox="0 0 24 24"><path d="M4 6.47v11.06c0 .77.83 1.25 1.5.86l9.64-5.53c.67-.38.67-1.35 0-1.73L5.5 5.61C4.83 5.22 4 5.7 4 6.47z M18 6h2v12h-2z"/></svg>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-lg sm:text-xl font-extrabold tracking-tight text-white flex items-center gap-1">
+                Cine<span class="text-red-500">Sphere</span>
+              </span>
+              <span class="text-[9px] uppercase tracking-widest text-slate-400 -mt-1 font-mono font-bold">VOD DISCOVERY</span>
+            </div>
+          </a>
+
+          <!-- Navigation Links for the 4 rows -->
+          <nav class="hidden md:flex items-center gap-1 text-sm font-medium text-slate-300">
+            <a href="#movies-section" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800/60 transition">Movies</a>
+            <a href="#series-section" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800/60 transition">Web Series</a>
+            <a href="#pakistani-dramas-section" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800/60 transition">Pakistani Dramas</a>
+            <a href="#indian-shows-section" class="px-3 py-1.5 rounded-lg hover:text-white hover:bg-slate-800/60 transition">Indian Shows</a>
+          </nav>
+        </div>
+
+        <!-- Right: Dynamic Live Search Bar, Language Dropdown & Mobile APK CTA -->
+        <div class="flex items-center gap-2.5 sm:gap-3 flex-1 justify-end max-w-xl">
+          
+          <!-- Live TMDB Search Bar with Clear Button -->
+          <div class="relative w-full max-w-[200px] sm:max-w-xs">
+            <input 
+              type="text" 
+              id="nav-search-input" 
+              placeholder="Search movies, shows..." 
+              autocomplete="off"
+              class="w-full pl-8 pr-7 py-1.5 sm:py-2 text-xs sm:text-sm bg-slate-900/90 border border-slate-700/80 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
+            />
+            <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5 sm:top-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <button id="clear-search-btn" class="hidden absolute right-2.5 top-2 sm:top-2.5 text-slate-400 hover:text-white text-xs cursor-pointer p-0.5" title="Clear Search">
+              ✕
+            </button>
+          </div>
+
+          <!-- Dynamic Multi-Language Dropdown Selector -->
+          <div class="relative flex-shrink-0" id="lang-dropdown-wrapper">
+            <button 
+              id="lang-dropdown-toggle" 
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs sm:text-sm font-medium transition cursor-pointer shadow-sm select-none"
+              title="Select Language"
+            >
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20M2 12h20"/></svg>
+              <span id="current-lang-label" class="hidden sm:inline">All Languages</span>
+              <svg id="lang-chevron" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+
+            <!-- Language Dropdown Menu -->
+            <div 
+              id="lang-dropdown-menu" 
+              class="hidden absolute right-0 top-full mt-2 w-56 py-1.5 rounded-xl bg-slate-900/95 border border-slate-700 shadow-2xl backdrop-blur-xl z-50 divide-y divide-slate-800/50 overflow-hidden"
+              role="menu"
+              aria-orientation="vertical"
+            >
+              <!-- Populated dynamically by main.ts -->
+            </div>
+          </div>
+
+          <!-- Portable Mobile APK Button -->
+          <button 
+            id="open-apk-drawer-btn" 
+            class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-semibold text-xs sm:text-sm shadow-md shadow-red-600/30 transition transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer flex-shrink-0"
+            title="Download CineSphere Mobile APK"
+          >
+            <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+            <span class="hidden lg:inline">Download APK</span>
+            <span class="lg:hidden">APK</span>
+            <span class="px-1.5 py-0.2 bg-black/30 rounded text-[9px] font-mono uppercase tracking-wider font-bold">3.4</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- LIVE SEARCH RESULTS OVERLAY (REPLACES SECTIONS CLEANLY WHEN ACTIVE) -->
+    <div id="search-results-overlay" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+          <h2 id="search-results-heading" class="text-xl sm:text-2xl font-bold text-white tracking-tight">
+            Search Results
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">Live TMDB results across movies and television shows</p>
+        </div>
+        <button id="close-search-btn" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium cursor-pointer transition">
+          Close Search ✕
+        </button>
+      </div>
+
+      <!-- Responsive Grid for Search Results -->
+      <div id="search-results-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- MAIN SECTIONS CONTAINER (BOUNDED LAYOUT) -->
+    <main id="main-sections-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-12">
+      
+      <!-- HERO BANNER (Dynamic TMDB Spotlight) -->
+      <section id="hero-banner" class="w-full">
+        <div class="w-full min-h-[440px] max-h-[580px] bg-slate-900/60 rounded-2xl border border-slate-800 animate-pulse flex items-center justify-center">
+          <div class="flex items-center gap-3 text-slate-400">
+            <svg class="w-8 h-8 animate-spin text-red-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+            <span>Loading Cinematic Spotlight...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 SEPARATE HORIZONTAL MEDIA GRIDS -->
+
+      <!-- GRID 1: MOVIES -->
+      <section id="movies-section" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-red-600/20 text-red-500 flex items-center justify-center font-bold">
+              🎬
+            </div>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Blockbuster Movies</h2>
+              <p class="text-xs text-slate-400">Top-rated cinema releases & worldwide theatrical debuts</p>
+            </div>
+          </div>
+          <!-- Carousel Navigation Arrows -->
+          <div class="flex items-center gap-1.5">
+            <button data-scroll-target="movies-row" data-scroll-dir="left" aria-label="Scroll Movies Left" class="p-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button data-scroll-target="movies-row" data-scroll-dir="right" aria-label="Scroll Movies Right" class="p-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+        <!-- Horizontal Scroll Rail with Auto-Loading Sentinel -->
+        <div id="movies-row" class="flex gap-4 overflow-x-auto scroll-smooth pb-3 custom-scrollbar snap-x">
+          <!-- Dynamically filled with media cards -->
+        </div>
+      </section>
+
+      <!-- GRID 2: WEB SERIES -->
+      <section id="series-section" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-blue-600/20 text-blue-500 flex items-center justify-center font-bold">
+              📺
+            </div>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Popular Web Series</h2>
+              <p class="text-xs text-slate-400">Award-winning episodic sagas & binge-worthy seasons</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button data-scroll-target="series-row" data-scroll-dir="left" aria-label="Scroll Series Left" class="p-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button data-scroll-target="series-row" data-scroll-dir="right" aria-label="Scroll Series Right" class="p-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="series-row" class="flex gap-4 overflow-x-auto scroll-smooth pb-3 custom-scrollbar snap-x">
+          <!-- Dynamically filled with media cards -->
+        </div>
+      </section>
+
+      <!-- GRID 3: PAKISTANI DRAMAS -->
+      <section id="pakistani-dramas-section" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold">
+              🇵🇰
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Pakistani Dramas</h2>
+                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-600/20 text-emerald-400 border border-emerald-500/30">URDU / PK</span>
+              </div>
+              <p class="text-xs text-slate-400">High-emotion, soulful storytelling from Pakistan's premier drama creators</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button data-scroll-target="pakistani-dramas-row" data-scroll-dir="left" aria-label="Scroll Pakistani Dramas Left" class="p-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button data-scroll-target="pakistani-dramas-row" data-scroll-dir="right" aria-label="Scroll Pakistani Dramas Right" class="p-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="pakistani-dramas-row" class="flex gap-4 overflow-x-auto scroll-smooth pb-3 custom-scrollbar snap-x">
+          <!-- Dynamically filled with media cards -->
+        </div>
+      </section>
+
+      <!-- GRID 4: INDIAN SHOWS -->
+      <section id="indian-shows-section" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-amber-600/20 text-amber-500 flex items-center justify-center font-bold">
+              🇮🇳
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Indian Shows & Specials</h2>
+                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-600/20 text-amber-300 border border-amber-500/30">HINDI / IN</span>
+              </div>
+              <p class="text-xs text-slate-400">Unscripted competitions, celebrity talk shows & comedy entertainment</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button data-scroll-target="indian-shows-row" data-scroll-dir="left" aria-label="Scroll Indian Shows Left" class="p-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button data-scroll-target="indian-shows-row" data-scroll-dir="right" aria-label="Scroll Indian Shows Right" class="p-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="indian-shows-row" class="flex gap-4 overflow-x-auto scroll-smooth pb-3 custom-scrollbar snap-x">
+          <!-- Dynamically filled with media cards -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full border-t border-slate-800/80 bg-slate-950/70 mt-20 py-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-slate-400">
+        <div class="flex items-center gap-3">
+          <div class="w-7 h-7 rounded-lg bg-red-600 flex items-center justify-center text-white font-bold">C</div>
+          <span>CineSphere VOD • Next-Gen Dynamic Streaming Architecture</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-6">
+          <span>Powered by TMDB API</span>
+          <span>Balanced Sandbox Embedded Player</span>
+          <span>6s Silent Failover Pool</span>
+        </div>
+        <div class="text-slate-400 text-[11px]">
+          Portfolio & Educational Demonstration © 2026
+        </div>
+      </div>
+    </footer>
+
+    <!-- MULTI-SERVER FAILOVER VIDEO MODAL (BALANCED SANDBOX) -->
+    <div 
+      id="video-modal" 
+      class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-media-title"
+    >
+      <div id="modal-backdrop" class="absolute inset-0 bg-black/85 backdrop-blur-md"></div>
+
+      <div class="relative z-10 w-full max-w-5xl bg-[#0c0f17] border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+        
+        <!-- Player Top Bar -->
+        <div class="px-4 py-3 sm:py-3.5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <h3 id="modal-media-title" class="text-sm sm:text-base font-bold text-white truncate">
+              Playing Media
+            </h3>
+            
+            <div id="active-server-badge" class="hidden sm:inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-800 text-xs border border-slate-700">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-slate-300 font-medium">Server 1 (Primary)</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <button 
+              id="test-failover-btn" 
+              class="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 transition cursor-pointer"
+              title="Test silent switch to next server immediately"
+            >
+              <span>⚡ Test Failover</span>
+            </button>
+
+            <button 
+              id="toggle-lights-btn" 
+              class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer"
+              title="Toggle Cinema Lights"
+              aria-label="Toggle Cinema Lights"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"/></svg>
+            </button>
+
+            <button 
+              id="close-modal-btn" 
+              class="p-1.5 rounded-lg bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white transition cursor-pointer"
+              title="Close Player (Esc)"
+              aria-label="Close Player"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Silent Failover Progress Bar -->
+        <div class="w-full bg-slate-950 h-1 overflow-hidden relative">
+          <div id="failover-progress-bar" class="h-full bg-gradient-to-r from-red-600 to-amber-500 w-0 transition-all duration-100"></div>
+        </div>
+
+        <!-- 16:9 THEATER IFRAME CONTAINER (BALANCED SANDBOX BOILERPLATE) -->
+        <div class="relative w-full aspect-video-cinematic bg-black overflow-hidden">
+          <iframe 
+            id="player-iframe" 
+            class="w-full h-full border-0 bg-black"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-presentation" 
+            loading="lazy" 
+            allowfullscreen 
+            allow="autoplay; fullscreen; picture-in-picture"
+          ></iframe>
+        </div>
+
+        <!-- Modal Bottom Bar & Server Switching Engine -->
+        <div class="px-4 py-3 bg-slate-900/95 border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+          <div class="space-y-0.5 max-w-md">
+            <div id="modal-media-meta" class="font-medium text-slate-300 truncate">
+              2024 • 4K HDR • Multi-Language
+            </div>
+            <div id="failover-timer-label" class="text-[11px] text-slate-400 font-mono">
+              Auto-failover monitor: active (6s)
+            </div>
+          </div>
+
+          <!-- Server Pool Switcher Pills -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-slate-400 text-[11px] mr-1 hidden sm:inline">Server Pool:</span>
+            <div id="server-pills-container" class="flex items-center gap-1.5">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PORTABLE MOBILE APP DRAWER -->
+    <div 
+      id="drawer-backdrop" 
+      class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden transition-opacity"
+    ></div>
+
+    <aside 
+      id="mobile-app-drawer" 
+      class="fixed top-0 right-0 bottom-0 w-full sm:w-[420px] bg-[#0c101a] border-l border-slate-800 z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col shadow-2xl overflow-y-auto"
+      aria-label="Mobile App Download"
+    >
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-red-600 to-amber-500 flex items-center justify-center text-white shadow-md">
+            📱
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">CineSphere Mobile</h3>
+            <p class="text-xs text-slate-400">Android APK Build • v3.4.2</p>
+          </div>
+        </div>
+        <button id="close-apk-drawer-btn" aria-label="Close Mobile App Drawer" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-6 flex-1">
+        <div class="relative p-5 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 text-center overflow-hidden">
+          <div class="absolute -top-12 -right-12 w-32 h-32 bg-red-600/20 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="inline-block p-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 shadow-xl mb-3">
+            <svg class="w-12 h-12 text-red-500 mx-auto" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+          </div>
+
+          <h4 class="text-lg font-bold text-white">Stream Anywhere on Android</h4>
+          <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+            Enjoy zero intrusive redirects, full offline video caching, 4K HDR playback, and auto-failover engine on your smartphone.
+          </p>
+
+          <div class="grid grid-cols-2 gap-2 mt-4 text-[11px] font-mono text-slate-300">
+            <div class="p-2 rounded-lg bg-slate-800/50 border border-slate-800">
+              <span class="text-slate-400 block text-[9px] uppercase">Package Size</span>
+              38.4 MB (Universal)
+            </div>
+            <div class="p-2 rounded-lg bg-slate-800/50 border border-slate-800">
+              <span class="text-slate-400 block text-[9px] uppercase">Android Req</span>
+              Android 8.0+
+            </div>
+            <div class="p-2 rounded-lg bg-slate-800/50 border border-slate-800">
+              <span class="text-slate-400 block text-[9px] uppercase">Failover Engine</span>
+              v2.8 Background
+            </div>
+            <div class="p-2 rounded-lg bg-slate-800/50 border border-slate-800">
+              <span class="text-slate-400 block text-[9px] uppercase">Ad-Blocker</span>
+              Built-In Sandbox
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <button 
+            id="apk-download-btn" 
+            class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold text-sm shadow-xl shadow-red-600/30 flex items-center justify-center gap-2 transition cursor-pointer"
+          >
+            <svg class="w-5 h-5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download APK (Direct Build)
+          </button>
+
+          <div id="apk-download-progress" class="hidden space-y-1.5 p-3 rounded-xl bg-slate-900 border border-slate-800">
+            <div class="flex justify-between text-xs font-mono text-slate-300">
+              <span id="apk-progress-status">Downloading CineSphere_v3.4.2.apk...</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div id="apk-bar-inner" class="bg-red-500 h-full w-0 transition-all duration-150"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center gap-4">
+          <div class="w-20 h-20 bg-white p-1 rounded-lg flex-shrink-0 flex items-center justify-center">
+            <svg viewBox="0 0 100 100" class="w-full h-full">
+              <rect x="5" y="5" width="30" height="30" fill="black"/>
+              <rect x="10" y="10" width="20" height="20" fill="white"/>
+              <rect x="15" y="15" width="10" height="10" fill="black"/>
+              <rect x="65" y="5" width="30" height="30" fill="black"/>
+              <rect x="70" y="10" width="20" height="20" fill="white"/>
+              <rect x="75" y="15" width="10" height="10" fill="black"/>
+              <rect x="5" y="65" width="30" height="30" fill="black"/>
+              <rect x="10" y="70" width="20" height="20" fill="white"/>
+              <rect x="15" y="75" width="10" height="10" fill="black"/>
+              <rect x="42" y="10" width="8" height="8" fill="black"/>
+              <rect x="42" y="25" width="8" height="15" fill="black"/>
+              <rect x="15" y="45" width="10" height="8" fill="black"/>
+              <rect x="35" y="45" width="20" height="10" fill="black"/>
+              <rect x="65" y="45" width="10" height="8" fill="black"/>
+              <rect x="80" y="45" width="12" height="15" fill="black"/>
+              <rect x="45" y="65" width="15" height="15" fill="black"/>
+              <rect x="70" y="65" width="20" height="8" fill="black"/>
+              <rect x="65" y="80" width="10" height="12" fill="black"/>
+            </svg>
+          </div>
+          <div class="text-xs space-y-1">
+            <div class="font-bold text-white">Scan from Phone</div>
+            <div class="text-slate-400 text-[11px] leading-relaxed">
+              Scan this QR code with your smartphone camera to load the mobile layout or download directly.
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400">Quick Installation Guide</h5>
+          <ol class="space-y-2 text-xs text-slate-300">
+            <li class="flex items-start gap-2">
+              <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold text-[10px] flex-shrink-0">1</span>
+              <span>Download the <code class="text-red-400">.apk</code> file to your device.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold text-[10px] flex-shrink-0">2</span>
+              <span>Open the file & tap <strong>Allow from this source</strong> when prompted.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-bold text-[10px] flex-shrink-0">3</span>
+              <span>Tap <strong>Install</strong> and enjoy seamless, failover VOD streaming!</span>
+            </li>
+          </ol>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- OVERVIEW / DETAILS MODAL -->
+    <div id="info-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+      <div id="info-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+      <div class="relative z-10 w-full max-w-2xl bg-[#0c101a] border border-slate-800 rounded-2xl shadow-2xl p-6 overflow-hidden">
+        <button id="close-info-btn" aria-label="Close Info Modal" class="absolute top-4 right-4 p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <div class="flex flex-col sm:flex-row gap-5">
+          <img id="info-poster" src="" alt="Poster" class="w-32 sm:w-44 aspect-[2/3] object-cover rounded-xl shadow-lg border border-slate-800 flex-shrink-0" />
+          <div class="space-y-3">
+            <h3 id="info-title" class="text-xl sm:text-2xl font-bold text-white">Title</h3>
+            
+            <div class="flex flex-wrap items-center gap-2 text-xs">
+              <span id="info-year" class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">Year</span>
+              <span id="info-rating" class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">Rating</span>
+              <span id="info-type" class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">Type</span>
+              <span id="info-lang" class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono">LANG</span>
+            </div>
+
+            <p id="info-overview" class="text-xs sm:text-sm text-slate-300 leading-relaxed max-h-48 overflow-y-auto custom-scrollbar">
+              Overview
+            </p>
+
+            <button id="info-play-btn" class="mt-4 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-red-600/30 flex items-center gap-2 cursor-pointer transition">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              Play Video Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN TYPESCRIPT ENTRY FILE -->
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

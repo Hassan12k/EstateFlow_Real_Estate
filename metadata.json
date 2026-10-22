@@ -1,0 +1,6 @@
+{
+  "name": "CineSphere VOD - Movie & Series Discovery",
+  "description": "Advanced Video-on-Demand discovery platform with TMDB integration, 4 media rows, language selector, portable mobile APK drawer, and multi-server failover video modal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
